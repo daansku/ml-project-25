@@ -1,1 +1,72 @@
-Classifying Brain Tumor MRI ScansA machine learning project comparing Logistic Regression and Convolutional Neural Networks (CNN) to classify brain tumors from MRI scans.📝 Project OverviewGlobal healthcare challenges, such as aging populations and rising chronic illness rates, necessitate more efficient diagnostic practices. This project automates the detection of brain tumors using Magnetic Resonance Imaging (MRI) data. By formulating the diagnosis as a supervised machine learning problem, we classify MRI scans into four distinct categories:GliomaMeningiomaPituitaryNo Tumor📂 DatasetThe data is sourced from the Brain Tumor MRI Dataset on Kaggle (Nickparvar M., 2021).Total Images: 7,023Original Split: 5,712 Training / 1,311 Testing.Our Split: We allocated 20% of the training set for validation.Training: 4,569 images (65%)Validation: 1,143 images (16%)Testing: 1,311 images (19%)🛠 MethodologyPreprocessingRaw images undergo several processing steps to ensure data quality (utilizing code by M. Nickparvar):Grayscale Conversion: Converting RGB to single-channel.Noise Removal: Applying Gaussian blur, thresholding, erosion, and dilation to isolate tumor features.Resizing: All images are resized to 64x64 pixels.Vectorization: * For Logistic Regression: Flattened to 1D vectors (4,096 features).For CNN: Kept as 2D arrays ($64 \times 64$).Models Implemented1. Multinomial Logistic Regression (Baseline)Objective: Classify based on linear combinations of pixel intensities.Loss Function: Logistic Loss.Iterations: 1,000.Pros: Simple, efficient in high-dimensional space.Cons: Cannot capture complex spatial patterns; assumes linearity.2. Convolutional Neural Network (CNN)Objective: Learn spatial hierarchies and complex patterns for image recognition.Loss Function: Categorical Cross-Entropy (CCE).Optimizer: Adam.Epochs: 30.Architecture (16 Layers):6 Convolutional layers (filters: $32 \rightarrow 64 \rightarrow 128$).3 Max Pooling layers (to halve spatial dimensions).4 Dropout layers (20% rate to prevent overfitting).2 Dense layers.1 Flatten layer.📊 ResultsWe evaluated both models based on Accuracy, Loss, and Recall. Given the medical context, Recall is a critical metric (minimizing False Negatives).$$Recall = \frac{TP}{TP + FN}$$Quantitative ComparisonMetricLogistic RegressionCNNTraining Accuracy97.4%98.1%Validation Accuracy87.1%97.1%Test Accuracy88.6%97.4%Recall (TP Rate)98.1%99.5%False Negative Rate1.9%0.5%AnalysisLogistic Regression: Showed signs of overfitting (high training accuracy, lower validation accuracy). It struggled to distinguish between similar tumor types (e.g., Meningioma vs. Glioma).CNN: Achieved superior performance across all metrics. The False Negative rate was significantly lower (0.5%), classifying a tumor as "non-tumor" only once per 200 guesses.🏁 ConclusionWhile Logistic Regression serves as a decent baseline, the CNN model is the clear choice for this medical application. It effectively learns non-linear spatial patterns, resulting in higher accuracy and, most importantly, a safer diagnostic tool with a minimal false negative rate.Future improvements could include using higher-resolution images and implementing Cross-Validation to ensure robust performance independent of data splits.🔗 References & CreditsDataset: Brain Tumor MRI Dataset by Masoud Nickparvar (Kaggle)Preprocessing Code: M. Nickparvar GitHub Repository📦 RequirementsPython 3.xScikit-LearnTensorFlow / KerasNumPyMatplotlib / Seaborn
+# Classifying Brain Tumor MRI Scans Based on the Type of Tumor
+
+## 1. Introduction
+As global challenges such as aging societies and rising rates of chronic illnesses increase the strain on health centers, the demand for efficient healthcare practices grows. This project proposes an automated alternative for detecting tumors from Magnetic Resonance Imaging (MRI) of the human brain. We utilize machine learning models to classify MRI scans into specific tumor categories or non-tumor instances.
+
+## 2. Problem Formulation
+**Dataset:** "Brain Tumor MRI Dataset" (Nickparvar M., 2021) from Kaggle.
+* **Total Images:** 7,023
+* **Input:** MRI scans (pixels intensities).
+* **Output:** Classification into 4 classes:
+    1.  **Glioma**
+    2.  **Meningioma**
+    3.  **Pituitary**
+    4.  **No tumor**
+
+## 3. Methods
+
+### Preprocessing
+Raw images undergo the following steps (utilizing code by M. Nickparvar):
+1.  **Grayscale Conversion:** Converting RGB to single-channel.
+2.  **Filtering:** Gaussian blur, thresholding, erosion, and dilation to remove background noise.
+3.  **Resizing:** All images resized to **64x64 pixels**.
+4.  **Splitting:** * Training: 4,569 images (65%)
+    * Validation: 1,143 images (16%)
+    * Testing: 1,311 images (19%)
+
+### Machine Learning Models
+We implemented and compared two methods:
+
+**1. Multinomial Logistic Regression (Baseline)**
+* **Input:** Flattened 1D vector (4,096 features).
+* **Loss Function:** Logistic Loss.
+* **Architecture:** Linear model assuming classes can be separated by linear combinations of pixel intensities.
+
+**2. Convolutional Neural Network (CNN)**
+* **Input:** 2D Array (64x64).
+* **Loss Function:** Categorical Cross-Entropy (CCE).
+* **Optimizer:** Adam (30 Epochs).
+* **Architecture (16 Layers):**
+    * 6 Conv2D layers (32, 64, 128 filters)
+    * 3 MaxPool layers
+    * 4 Dropout layers (0.2 rate)
+    * 2 Dense layers
+    * 1 Flatten layer
+
+## 4. Results
+
+### Quantitative Analysis
+The CNN outperformed Logistic Regression across all key metrics.
+
+| Metric | Logistic Regression | CNN |
+| :--- | :--- | :--- |
+| **Training Accuracy** | 97.4% | 98.1% |
+| **Validation Accuracy** | 87.1% | 97.1% |
+| **Test Accuracy** | **88.6%** | **97.4%** |
+| **Recall** | 98.1% | **99.5%** |
+| **False Negative Rate** | 1.9% | **0.5%** |
+
+* **Logistic Regression:** Showed signs of overfitting (high training accuracy vs. lower validation accuracy) and struggled to distinguish between similar classes like Meningioma and Glioma.
+* **CNN:** Achieved near-perfect classification for "No tumor", "Pituitary", and "Glioma".
+
+### Qualitative Analysis
+The CNN demonstrated stable learning curves, with validation loss stabilizing around 20-25 epochs. The filters successfully learned local edges and shapes, allowing for better distinction between tumor types compared to the linear approach of Logistic Regression.
+
+## 5. Conclusion
+While Logistic Regression provides a decent baseline with 88.6% accuracy, it is insufficient for critical medical diagnosis due to a higher rate of false negatives (1.9%).
+
+The **CNN model** is the superior choice for this task, achieving **97.4% accuracy** and a **0.5% false negative rate**. In a medical context, where missing a tumor (False Negative) is dangerous, the high recall of the CNN makes it the safer and more reliable tool.
+
+## 6. References
+* **Dataset:** Nickparvar, M. (2021). [Brain tumor MRI dataset](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset). Kaggle.
+* **Preprocessing Code:** Nickparvar, M. [Brain-Tumor-MRI-Classification](https://github.com/masoudnick/Brain-Tumor-MRI-Classification). GitHub.
